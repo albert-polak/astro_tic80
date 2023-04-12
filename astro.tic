@@ -1,0 +1,155 @@
+-- title:   game title
+-- author:  Albert Polak, lugii1999@gmail.com, etc.
+-- desc:    short description
+-- site:    website link
+-- license: MIT License (change this to your license of choice)
+-- version: 0.1
+-- script:  lua
+-- DISPLAY   240x136
+
+map_w, map_h=960, 544
+camera_x, camera_y=0, 0
+
+scale_factor=1
+
+min_x=camera_x
+max_x=camera_x+240
+min_y=camera_y
+max_y=camera_y+136
+
+
+random=math.random
+sin=math.sin
+cos=math.cos
+pi=math.pi
+
+_mouse=mouse()
+
+planets={}
+no_planets=10
+
+t=0
+x=96
+y=24
+
+function fillPlanets()
+	for i=1, no_planets do
+		planets[i]={
+			x=20,
+			y=20,
+			radius=random(5, 20),
+			ring_h=random(0,100),
+			ring_w=random(0,100),
+			ring_dist= 40,
+			ring_width=random(0,10),
+			ring_color=random(1,16),
+			color=random(1,16),
+			border=random(0,16),
+			inner=random(1,16),
+			border_size=random(0,5),
+			inner_size=random(0,5)
+		}
+	end
+end
+
+function drawScope()
+	
+end
+
+function drawPlanets()
+	for i=1, 1 do
+	s=scale_factor
+	tmp=planets[i]
+	if (tmp.x>=min_x and tmp.x<=max_x)
+		and (tmp.y>=min_y and tmp.y<=max_y)
+		then
+		
+		circ(tmp.x-camera_x, tmp.y-camera_y, 
+			(tmp.radius+tmp.border_size)/s,
+		 tmp.border)
+		circ(tmp.x-camera_x, tmp.y-camera_y, 
+			tmp.radius/s,
+		 tmp.color)
+		circ(tmp.x-camera_x, tmp.y-camera_y, 
+			(tmp.radius-tmp.inner_size)/s,
+		 tmp.inner)
+			
+		drawRing(tmp)
+	end
+	end
+end
+
+function drawRing(tmp)
+	s=scale_factor
+	for i=tmp.ring_dist/s,
+	 (tmp.ring_dist+tmp.ring_width)/s do
+		-- angle
+		for j=0, 720 do
+			pixel_colour=
+			pix(formula_x, formula_y)
+			
+			formula_x=tmp.x-camera_x+
+			i*cos(j*pi/360)*tmp.ring_w/100/s
+			formula_y=tmp.y-camera_y+
+			i*sin(j*pi/360)*tmp.ring_h/100/s
+			if tmp.ring_w>tmp.ring_h then
+				if (pixel_colour==0 and j>360)then
+					pix(formula_x, 
+					formula_y, 
+					tmp.ring_color)
+				end
+				if j<360 then
+					pix(formula_x, 
+					formula_y, 
+					tmp.ring_color)
+				end
+			else 
+				if (pixel_colour==0 and 
+				(j<180 or j>520))then
+					pix(formula_x, 
+					formula_y, 
+					tmp.ring_color)
+				end
+				if (j>180 and j<520) then
+					pix(formula_x, 
+					formula_y, 
+					tmp.ring_color)
+				end
+			end	
+		end
+	end
+end
+
+function BOOT()
+	fillPlanets()
+end
+
+function updateCameraPos()
+	min_x=camera_x
+	max_x=camera_x+240
+	min_y=camera_y
+	max_y=camera_y+136
+end
+
+function TIC()
+	
+	if btn(0) then 
+	camera_y=camera_y-1 end
+	if btn(1) then 
+	camera_y=camera_y+1 end
+	if btn(2) then 
+	camera_x=camera_x-1 end
+	if btn(3) then 
+	camera_x=camera_x+1 end
+	if btnp(4) then
+		if scale_factor~=1 then
+			scale_factor=scale_factor-1 end
+	end
+	if btnp(5) then 
+		scale_factor=scale_factor+1 end
+
+	updateCameraPos()
+	cls(0)
+	drawPlanets()
+	t=t+1/60
+end
